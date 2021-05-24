@@ -47,6 +47,7 @@ WORKDIR /
 # 安装 yarn
 RUN ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
     && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+    && apk del .build-deps-yarn \
     && npm install cnpm -g \
     && npm install -g cnpm --registry=http://registry.npm.taobao.org
 
