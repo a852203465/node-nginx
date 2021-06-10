@@ -23,7 +23,11 @@ RUN addgroup -g 1000 node \
         linux-headers \
         make \
         python3 \
-        wget
+        wget \
+     && apk add --no-cache --virtual .build-deps-yarn \
+        curl \
+        gnupg \
+        tar
 
 WORKDIR /opt
 
@@ -48,6 +52,7 @@ WORKDIR /
 RUN ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
     && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
     && apk del .build-deps-yarn \
+    && npm install -g npm \
     && npm install cnpm -g \
     && npm install -g cnpm --registry=http://registry.npm.taobao.org
 
