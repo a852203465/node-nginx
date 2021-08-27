@@ -5,6 +5,7 @@
  - 基于Node 16.2.0, Nginx 1.20.0-alpine, Yarn 1.22.10
 ### v1.1
  - 基于Node 14.17.5, Nginx 1.20.0-alpine, Yarn 1.22.10
+ - 修改编译方式
 
 ## 运行
 ### 自行build docker镜像
