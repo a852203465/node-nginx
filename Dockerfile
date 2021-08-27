@@ -5,7 +5,7 @@ FROM nginx:1.20.0-alpine
 MAINTAINER Rong.Jia 852203465@qq.com
 
 ENV YARN_VERSION 1.22.10
-ENV NODE_VERSION 16.2.0
+ENV NODE_VERSION 14.17.5
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -13,6 +13,7 @@ RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
     && apk add --no-cache \
         libstdc++ \
+        python3 \
     && apk add --no-cache --virtual .build-deps \
         binutils-gold \
         curl \
@@ -22,7 +23,6 @@ RUN addgroup -g 1000 node \
         libgcc \
         linux-headers \
         make \
-        python3 \
         wget \
      && apk add --no-cache --virtual .build-deps-yarn \
         curl \
@@ -42,16 +42,17 @@ RUN wget https://npm.taobao.org/mirrors/node/v$NODE_VERSION/node-v$NODE_VERSION.
     && cd .. \
     && rm -rf "node-v$NODE_VERSION" node-v$NODE_VERSION.tar.gz
 
+# 安装 yarn
 RUN wget https://github.com/yarnpkg/yarn/releases/download/v$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz \
     && tar zxvf yarn-v$YARN_VERSION.tar.gz \
-    && rm -rf yarn-v$YARN_VERSION.tar.gz
+    && rm -rf yarn-v$YARN_VERSION.tar.gz \
+    && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+    && apk del .build-deps-yarn
 
 WORKDIR /
 
-# 安装 yarn
-RUN ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-    && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-    && apk del .build-deps-yarn \
+RUN ln -s python3 /usr/bin/python
     && npm install -g npm \
     && npm install cnpm -g \
     && npm install -g cnpm --registry=http://registry.npm.taobao.org
