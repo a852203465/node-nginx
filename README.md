@@ -6,6 +6,9 @@
 ### v1.1
  - 基于Node 14.17.5, Nginx 1.20.0-alpine, Yarn 1.22.10
  - 修改编译方式
+### v1.2
+ - 基于Node 14.18.1-alpine, Nginx 1.20.1, Yarn 1.22.10
+ - 修改编译方式，处理镜像过大问题
 
 ## 运行
 ### 自行build docker镜像
