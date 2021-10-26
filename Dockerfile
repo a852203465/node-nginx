@@ -1,5 +1,5 @@
 # 基础镜像
-FROM node:14.18.1-alpine
+FROM node:12-alpine
 
 # 作者
 MAINTAINER Rong.Jia 852203465@qq.com
