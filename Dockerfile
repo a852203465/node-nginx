@@ -4,26 +4,17 @@ FROM node:12-alpine
 # 作者
 MAINTAINER Rong.Jia 852203465@qq.com
 
-ENV YARN_VERSION 1.22.10
 ENV NGINX_VERSION 1.20.1
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-# 安装需要的软件
-RUN apk update && \
-    apk add --no-cache ca-certificates && \
-    apk add --no-cache curl bash tree tzdata && \
-    cp -rf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-WORKDIR /opt
-
 # 安装 nginx
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     && CONFIG="\
-        --prefix=/etc/nginx \
+        --prefix=/usr/share/nginx \
         --sbin-path=/usr/sbin/nginx \
         --modules-path=/usr/lib/nginx/modules \
-        --conf-path=/etc/nginx/nginx.conf \
+        --conf-path=/usr/share/nginx/nginx.conf \
         --error-log-path=/var/log/nginx/error.log \
         --http-log-path=/var/log/nginx/access.log \
         --pid-path=/var/run/nginx.pid \
@@ -111,8 +102,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     && ./configure $CONFIG \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
-    && rm -rf /etc/nginx/html/ \
-    && mkdir /etc/nginx/conf.d/ \
+    && rm -rf /usr/share/nginx/html/ \
+    && mkdir /usr/share/nginx/conf.d/ \
     && mkdir -p /usr/share/nginx/html/ \
     && install -m644 html/index.html /usr/share/nginx/html/ \
     && install -m644 html/50x.html /usr/share/nginx/html/ \
@@ -121,7 +112,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     && install -m755 objs/ngx_http_image_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_image_filter_module-debug.so \
     && install -m755 objs/ngx_http_geoip_module-debug.so /usr/lib/nginx/modules/ngx_http_geoip_module-debug.so \
     && install -m755 objs/ngx_stream_geoip_module-debug.so /usr/lib/nginx/modules/ngx_stream_geoip_module-debug.so \
-    && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
+    && ln -s ../../usr/lib/nginx/modules /usr/share/nginx/modules \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
     && rm -rf /usr/src/nginx-$NGINX_VERSION \
@@ -149,32 +140,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# 安装 yarn
-RUN apk add --no-cache --virtual .build-deps-yarn \
-            curl \
-            gnupg \
-            tar \
-    && for key in \
-        6A010C5166006599AA17F08146C2130DFD2497F5 \
-      ; do \
-        gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-        gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-        gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-      done \
-      && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-      && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-      && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-      && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-      && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-      && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-      && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-      && apk del .build-deps-yarn
-
-WORKDIR /
-
-RUN npm install -g npm \
-    && npm install cnpm -g \
-    && npm install -g cnpm --registry=http://registry.npm.taobao.org
+WORKDIR /usr/share/nginx
 
 EXPOSE 80
 
