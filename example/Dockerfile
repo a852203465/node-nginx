@@ -1,12 +1,10 @@
-FROM registry.cn-shenzhen.aliyuncs.com/a852203465/node-nginx:1.1
+FROM registry.cn-shenzhen.aliyuncs.com/a852203465/node-nginx:1.3
 
 RUN mkdir /home/web
 
 ADD ./dev-pord-switch.tar.gz /home/web
 
-RUN npm config set registry http://registry.npm.taobao.org\
-  && npm config set sass_binary_site http://npm.taobao.org/mirrors/node-sass\
-  && cd /home/web\
+RUN cd /home/web\
   && npm config get registry\
   && cnpm install
 
