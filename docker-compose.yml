@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  node-nginx:
+    image: registry.cn-shenzhen.aliyuncs.com/a852203465/node-nginx:2.0
+    container_name: node-nginx
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    expose:
+      - 80
+    ports:
+      - "8000:80"
+
+
+
+
+
