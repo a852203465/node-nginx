@@ -4,6 +4,8 @@ services:
   node-nginx:
     image: registry.cn-shenzhen.aliyuncs.com/a852203465/node-nginx:2.0
     container_name: node-nginx
+    volumes:
+      - ./logs:/var/log/nginx
     build:
       context: ./
       dockerfile: Dockerfile

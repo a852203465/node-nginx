@@ -5,8 +5,8 @@ services:
       image: devprod:latest
       container_name: devprod
       environment:
-        SEVER_HOST: 192.168.224.142
-        SEVER_PORT: 8001
+        API_HOST: 192.168.224.142
+        API_PORT: 8001
         API_PREFIX: /api
       build:
         context: ./

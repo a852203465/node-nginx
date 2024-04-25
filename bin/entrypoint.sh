@@ -8,7 +8,7 @@ if ! test -d "/etc/nginx/html"; then
     mv /usr/share/nginx/html /etc/nginx
 fi
 
-sed -i "s|<body>|<body>\n<script src="./industry_config.js"></script>|g" /etc/nginx/html/index.html
+sed -i "s|</head>|\n<script src="./industry_config.js"></script>\n</head>|g" /etc/nginx/html/index.html
 
 envs=$(printenv)
 json="{ "
@@ -19,7 +19,7 @@ while IFS= read -r line; do
 done <<< "$envs"
 json="${json%,} }"
 
-echo "env: $json"
+echo "env ${json}"
 
 config="Object.defineProperty(window, 'industry_config',{get: function(){return Object.seal(${json})},configurable: false,})"
 echo $config > /etc/nginx/html/industry_config.js
